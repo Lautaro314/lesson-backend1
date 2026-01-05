@@ -1,9 +1,9 @@
 const fs = require("fs");
 
 class ProductManager {
-    constructor() {
-        this.path="productos.json";
-        this.carrito= [];
+    constructor(path) {
+        this.path=path;
+        this.products= [];
     }
 
 
@@ -34,18 +34,17 @@ class ProductManager {
             }
         } catch (error) {
             console.error("error al obtener los productos" , error);
-            
         }
     }
 
 
 
 
-    async addNewProduct({id ,title , price , status , stock , categoria}) {
+    async addNewProduct({producto , price , status , stock , categoria}) {
         try {
-            const producto = await fs.promises.readFile(this.path , "utf-8");
-            const data = JSON.parse(producto)
-            if (!title || !price || !status || !stock || !categoria) {
+            const producto1 = await fs.promises.readFile(this.path , "utf-8");
+            const data = JSON.parse(producto1)
+            if (!producto || price == null || status == null || stock == null || !categoria) {
                 console.log("No se puede generar el nuevo producto");
                 return null;
             }
@@ -56,7 +55,7 @@ class ProductManager {
             //GENERO EL NUEVO PRODUCTO
             const newProduct = {
                 id:newId,
-                title,
+                producto,
                 price,
                 status,
                 stock,
@@ -72,6 +71,7 @@ class ProductManager {
 
         } catch (error) {
             console.error("Error al agregar un nuevo producto" , error);
+            return null
         }
     }
 
@@ -80,35 +80,39 @@ class ProductManager {
 
     async updateProduct (id , camposDelProducto) {
         try {
-            const producto = await fs.promises.readFile(this.path , "utf-8")
-            const data = JSON.parse(producto);
+            const data = await fs.promises.readFile(this.path , "utf-8")
+            const products = JSON.parse(data);
 
-            const index = data.findIndex(p => p.id === id)
+            const index = products.findIndex((product) => product.id === Number.id)
 
             if (index === -1) {
                 console.log("Producto no encontrado");
                 return null;
             }
-            
+
+            //evitar que se modifique el id
             if ("id" in camposDelProducto) {
                 delete camposDelProducto.id;
             }
 
-            data[index] = {
-                ...data[index],
-                ...camposDelProducto
-            }
+            //cambios del mismo producto
+            products[index] = {
+                ...products[index],
+                ...camposDelProducto,
+            };
 
-            await fs.promises.writeFile(this.path , JSON.stringify(data , null , 2))
-            console.log("Producto encontrado" , data[index]);
-            return data[index]
+            await fs.promises.writeFile(this.path , JSON.stringify(products , null , 2))
+            return products[index]
 
         } catch (error) {
             console.error("Error al actualizar los productos" , error);
-            
+            return null
         }
     }
 
+    
+    
+    
     async deleteProduct (id) {
         try {
             const producto = await fs.promises.readFile(this.path , "utf-8");
@@ -138,64 +142,3 @@ class ProductManager {
 
 module.exports = {ProductManager}
 
-//const pm = new ProductManager();
-/*
-pm.getProducts().then((prod) => {
-    console.log("Productos obtenidos" , prod);
-})
-*/
-/*
-pm.deleteProduct(2).then((prod) => {
-    console.log("Se eliminó:" , prod);
-    
-})
-*/
-/*
-//ACTUALIZAR EL PRODUCTO
-pm.updateProduct(3, {
-    title: "Bermudas sin roturas diseñadas",
-    stock: 6,
-    price: 24000 
-})
-*/
-
-//TRAER TODO LOS PRODUCTOS 
-/*
-(async () => {
-    const nuevoProducto = await pm.addNewProduct( {
-        title: "Zapatillas Campus",
-        price: 45000,
-        status: true,
-        stock: 10,
-        categoria: "Calzado" 
-    })
-    console.log("Nuevo producto:" , nuevoProducto);
-    
-})();
-*/
-/*
-(async () => {
-    const nuevoProducto = await pm.addNewProduct( {
-        title: "Remeras musculosas con capucha",
-        price: 80000,
-        status: true,
-        stock: 10,
-        categoria: "Camperas" 
-    })
-    console.log("Nuevo producto:" , nuevoProducto);
-})();
-*/
-/*
-pm.getProductById(2).then((productos) => {
-    console.log("Productos obtenidos");
-});
-*/
-
-
-//TRAER EL ID DEL ARRAY
-/*
-(async () => {
-    const producto = await pm.getProductById(2);
-    console.log("Producto encontrado:" , producto);
-})
-    */

@@ -1,25 +1,19 @@
 [
   {
     "id": 1,
-    "Producto": "Remera Overside",
-    "Categoria": "Remeras",
-    "Price": 20000,
+    "producto": "Remera Overside",
+    "categoria": "Remeras",
+    "price": 20000,
     "stock": 10,
     "status": true
   },
   {
-    "id": 2,
-    "Producto": "Bermudas con Roturas",
-    "Categoria": "Bermudas",
-    "Price": 15000,
-    "stock": 6
-  },
-  {
     "id": 3,
-    "Producto": "Chaleco de Cuero",
-    "Categoria": "Camperas",
-    "Price": 45000,
-    "stock": 10
+    "producto": "Chaleco de Cuero",
+    "categoria": "Camperas",
+    "price": 45000,
+    "stock": 10,
+    "status": true
   },
   {
     "id": 4,
@@ -28,5 +22,13 @@
     "status": true,
     "stock": 10,
     "categoria": "Calzado"
+  },
+  {
+    "id": 5,
+    "producto": "Camisa de Lino",
+    "price": 24000,
+    "status": true,
+    "stock": 10,
+    "categoria": "Camisas"
   }
 ]
