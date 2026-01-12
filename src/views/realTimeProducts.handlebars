@@ -1,5 +1,5 @@
 <h2>Productos en tiempo real</h2>
- <form id="formulario">
+<form id="formulario">
         <label for="exampleInputEmail1" class="form-label">PRODUCT</label>
         <input type="text" id="product"></input>
         <label for="exampleInputPassword1" class="form-label">CATEGORY</label>
@@ -11,12 +11,14 @@
         <label for="exampleInputPassword1" class="form-label">STATUS</label>
         <input type="text" id="status"></input>
         <button type="submit" class="btn btn-primary">Send</button>
- </form>
+</form>
 <div id="productosDisponibles">
     <script>
         const socket = io()
         const arrayDeProductos = document.getElementById("productosDisponibles");
         const formulario = document.getElementById("formulario")
+        
+        //Renderizar todos los productos
         socket.on("products" , (product) => {
         let html = "";
            product.forEach((productos) => {
@@ -28,6 +30,7 @@
                 <li>${productos.price}</li>
                 <li>${productos.stock}</li>
                 <li>${productos.status}</li>
+                <button type="button" onClick="eliminarProducto(${productos.id})" class="btn btn-primary">Delete</button>
             </ul>`
            });
 
@@ -36,22 +39,31 @@
 
         
         
-        
+        //Enviar un nuevo producto
         formulario.addEventListener("submit" , (e) => {
             e.preventDefault();
         
         const nuevoProducto =  {
             producto: document.getElementById("product").value,
             categoria: document.getElementById("category").value,
-            price: document.getElementById("price").value,
-            stock: document.getElementById("stock").value,
+            price: Number(document.getElementById("price").value),
+            stock: Number(document.getElementById("stock").value),
             status: document.getElementById("status").value,
         }
 
         socket.emit("newProduct" , nuevoProducto)
         formulario.reset();
 
-    })
+    });
+
+        //Eliminar Producto
+        const eliminarProducto = (id) => {
+            
+        socket.emit("deleteProduct" , id);
+        
+        };
+
+
     </script>
 </div>
 

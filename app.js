@@ -57,6 +57,15 @@ io.on("connection" , async (socket) => {
         io.emit("products" , updateProducts)
 
     })
+
+    socket.on("deleteProduct" , async (productData) => {
+
+            await manager.deleteProduct(productData);
+
+            const updateProduct = await manager.getProducts()
+
+            io.emit("products" , updateProduct)
+    })
 })
 
 
