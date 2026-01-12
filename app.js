@@ -1,18 +1,77 @@
 const express = require("express")
+const handlebars = require("express-handlebars")
 const {ProductManager} = require("./src/productManager");
 const {CartManager} = require("./src/cartManager")
+const http = require("http");
+const {Server} = require("socket.io");
 
+
+
+//UBICAR EL PUERTO DONDE SE VIZUALISARAN LOS PRODUCTOS
 const app = express()
 const port = 8080;
+
+
+
+//CONFIGURACION DE WEBSOCKET
+const server = http.createServer(app);
+const io = new Server(server)
+
+
+
+//CONFIGURACION DE MIDDLEWARS
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
+app.use(express.static("./src/public"))
+
+
+
+//CONFIGURACION DE HANDLBARS
+app.engine("handlebars" , handlebars.engine())
+app.set("views", "./src/views")
+app.set("view engine" , "handlebars")
 
 const manager = new ProductManager('./productos.json')
 const cartManager = new CartManager('./carts.json')
 
 
-//SERVIDOR DE PRODUCTOS
 
+
+//LEVANTAR SOCKET
+io.on("connection" , async (socket) => {
+    
+    //Enviar productos al conectarse
+    console.log("Cliente conectado" , socket.id);
+    const products = await manager.getProducts()
+    
+    socket.emit("products" , products)
+    
+    //Escuchar cuando el cliente crea un producto
+    socket.on("newProduct" , async (productData) => {
+        
+        await manager.addNewProduct(productData);
+
+        const updateProducts = await manager.getProducts()
+
+        //Actualizar a todos los clientes
+        io.emit("products" , updateProducts)
+
+    })
+})
+
+
+
+//LEVANTAR HANDLEBARS
+app.get("/" , (req , res) => {
+    res.render("realTimeProducts" , {
+        title: "Productos en tiempo real"
+    })
+})
+
+
+
+
+//SERVIDOR DE PRODUCTOS
 app.get("/api/products" , async (req , res) => {
 
     try {
@@ -185,6 +244,6 @@ app.post("/api/carts/:cid/product/:pid" , async (req , res) => {
 })
 
 
-app.listen(port , () => {
+server.listen(port , () => {
     console.log("Escuchando en el puerto" , port);
 })

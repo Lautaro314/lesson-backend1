@@ -17,7 +17,7 @@
   },
   {
     "id": 4,
-    "title": "Zapatillas Campus",
+    "producto": "Zapatillas Campus",
     "price": 45000,
     "status": true,
     "stock": 10,
@@ -30,5 +30,13 @@
     "status": true,
     "stock": 10,
     "categoria": "Camisas"
+  },
+  {
+    "id": 6,
+    "producto": "Zapatillas Nike DN",
+    "price": 55000,
+    "status": true,
+    "stock": 10,
+    "categoria": "Calzados"
   }
 ]

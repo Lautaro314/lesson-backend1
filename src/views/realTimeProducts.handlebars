@@ -1,0 +1,57 @@
+<h2>Productos en tiempo real</h2>
+ <form id="formulario">
+        <label for="exampleInputEmail1" class="form-label">PRODUCT</label>
+        <input type="text" id="product"></input>
+        <label for="exampleInputPassword1" class="form-label">CATEGORY</label>
+        <input type="text" id="category"></input>
+        <label for="exampleInputPassword1" class="form-label">PRICE</label>
+        <input type="number" id="price"></input>
+        <label for="exampleInputPassword1" class="form-label">STOCK</label>
+        <input type="number" id="stock"></input>
+        <label for="exampleInputPassword1" class="form-label">STATUS</label>
+        <input type="text" id="status"></input>
+        <button type="submit" class="btn btn-primary">Send</button>
+ </form>
+<div id="productosDisponibles">
+    <script>
+        const socket = io()
+        const arrayDeProductos = document.getElementById("productosDisponibles");
+        const formulario = document.getElementById("formulario")
+        socket.on("products" , (product) => {
+        let html = "";
+           product.forEach((productos) => {
+            html += `
+            <ul>
+                <li>${productos.id}</li>
+                <li>${productos.producto}</li>
+                <li>${productos.categoria}</li>
+                <li>${productos.price}</li>
+                <li>${productos.stock}</li>
+                <li>${productos.status}</li>
+            </ul>`
+           });
+
+           arrayDeProductos.innerHTML = html;
+        })
+
+        
+        
+        
+        formulario.addEventListener("submit" , (e) => {
+            e.preventDefault();
+        
+        const nuevoProducto =  {
+            producto: document.getElementById("product").value,
+            categoria: document.getElementById("category").value,
+            price: document.getElementById("price").value,
+            stock: document.getElementById("stock").value,
+            status: document.getElementById("status").value,
+        }
+
+        socket.emit("newProduct" , nuevoProducto)
+        formulario.reset();
+
+    })
+    </script>
+</div>
+
