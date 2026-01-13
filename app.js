@@ -69,6 +69,12 @@ io.on("connection" , async (socket) => {
 })
 
 
+router.get('/' , async (req , res) => {
+    const products = await manager.getProducts();
+    res.render("home" , {products})
+})
+
+
 
 //LEVANTAR HANDLEBARS
 app.get("/" , (req , res) => {
